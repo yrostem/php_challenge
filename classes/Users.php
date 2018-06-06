@@ -10,8 +10,12 @@ class users {
     public $logged_in;
     public $login_submit;
     public $password;
+    public $playlistUrl;
     public $user_id;
+    public $playlist_img;
+    public $playlist_naam;
     public $url;
+    public $user;
     public $password_again;
     public $submit;
     public $errors = array();
@@ -39,7 +43,6 @@ class users {
 
     public function __construct()
     {
-        session_start();
         $this->dbc = new mysqli("localhost", "root", '', "spotitube");
         if ($this->dbc->connect_errno){
             die($this->dbc->connect_error);
@@ -47,17 +50,24 @@ class users {
     }
 
     public function getPlaylist(){
-        
-        $query = "SELECT playlist_url from playlist where user_id = $this->user_id";
+        $query = "SELECT * from playlist where username ='".$_SESSION['username']."'";
         $result = $this->dbc->query($query);
         if ($result->num_rows > 0) {
             // output data of each row
             while($row = $result->fetch_assoc()) {
-             echo   '            <iframe width="560" height="315" src='.$row['playlist_url'] .'frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
+             echo   '<iframe width="560" height="315" src='.$_SESSION['playlist_url'] .' frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
             }
         } else {
-            echo "0 results";
+            echo "Momenteel geen playlist, voeg nieuwe toe.";
         }
+    }
+
+    public function addPlaylist(){
+        $this->playlist_img = $_GET['playlist_img'];
+        $this->playlist_naam = $_GET['playlist_naam'];
+        $query3 = "INSERT INTO playlist (username, playlist_naam, playlist_img) 
+                  VALUES ('".$_SESSION['username']."', $this->playlist_naam,',$this->playlist_img')";
+        $this->dbc->query($query3);
     }
 
     public function register(){
@@ -106,12 +116,16 @@ public function validate_login(){
         $result = $this->dbc->query($this->get_user_query);
 
         if ($result->num_rows > 0) {
-            $_SESSION['user_id'] = $this->user_id;
+            while ($row = $result->fetch_assoc()){
+                $_SESSION['username'] = $row['username'];
+                $_SESSION['playlist_url'] = $row['playlist_url'];
+            }
             header("location: loginredirect.php");
         } else {
             echo $this->faultLoginMsg;
         }
+        }
+
     }
-}
 }
 ?>

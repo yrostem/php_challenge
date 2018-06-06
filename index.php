@@ -25,7 +25,9 @@ waarmee ik bezig was, was sessions maken voor gebruikers.
     <div class="container">
       <div class="row">
         <div class="col-md-12 text-center">
-          <h1 class="display-1">Recente playlists</h1>
+          <h1 class="display-1">Onze playlists</h1>
+            <?=      $_SESSION['playlist_url'];
+            ?>
         </div>
       </div>
     </div>
@@ -54,7 +56,13 @@ waarmee ik bezig was, was sessions maken voor gebruikers.
     <div class="container">
       <div class="row">
           <?php
-          $users->getPlaylist();
+          if (!empty($_SESSION['username'])){
+              $users->getPlaylist();
+
+          } else{
+              echo "<h3>Playlist is leeg, voeg nieuwe toe.</h3>";
+          }
+
           ?>
       </div>
     </div>
