@@ -2,6 +2,7 @@
 include ('inc/head.php');
 include ('inc/header.php');
 include ('inc/banner.php');
+error_reporting();
 
 spl_autoload_register(function ($class_name) {
     include 'classes/'.ucfirst( $class_name ). '.php';
